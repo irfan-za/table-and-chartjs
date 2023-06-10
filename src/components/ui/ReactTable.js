@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -48,7 +49,7 @@ export default function ReactTable() {
 
   return (
      <div>
-      <table>
+      <table className="border border-red-700">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
