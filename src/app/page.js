@@ -1,113 +1,192 @@
-import Image from 'next/image'
+'use client'
+import { Line, Bar } from "react-chartjs-2"
+import { CategoryScale, Chart, LineElement, BarElement, LinearScale, PointElement, Title, Legend, Filler, Tooltip } from "chart.js";
+import { useEffect, useRef, useState } from "react";
+
+  
+Chart.register(CategoryScale, LineElement, BarElement, LinearScale, PointElement, Title, Legend, Filler, Tooltip );
+  
+export const data = {
+  labels: ['hari 1', 'hari 2', 'hari 3', 'hari 4', 'hari 5', 'hari 6', 'hari 7', 'hari 8', 'hari 9', 'hari 10', 'hari 11', 'hari 12'],
+    datasets: [
+      {
+      label: 'jumlah rokok',
+      data: [12, 13, 10, 9, 6, 8, 6, 10, 11, 9, 10, 11],
+      borderWidth: 1,
+      borderColor: 'red',
+      fill: true,
+      cubicInterpolationMode: 'monotone',
+    },
+      {
+      label: 'jumlah uang',
+      data: [1, 4, 8, 6, 10, 11, 9, 10, 6, 7, 6, 4 ],
+      borderWidth: 1,
+      borderColor: 'blue',
+      fill: true,
+      cubicInterpolationMode: 'monotone',
+    },
+  ]
+}
+const createGradient=(ctx, area)=>{
+  const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
+  gradient.addColorStop(0, 'green');
+  gradient.addColorStop(0.5, 'yellow');
+  gradient.addColorStop(1, 'red');
+  return gradient;
+}
+const createGradientBackgroundRed=(ctx, area)=>{
+  const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
+  gradient.addColorStop(0, 'rgba(20, 205, 30, 0.01)');
+  gradient.addColorStop(1, 'rgba(255, 0, 111, 0.6)');
+  return gradient;
+}
+const createGradientBackgroundBlue=(ctx, area)=>{
+  const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
+  gradient.addColorStop(0, 'rgba(0, 255, 247, 0.01)');
+  gradient.addColorStop(1, 'rgba(0, 255, 247, 0.6)');
+  return gradient;
+}
 
 export default function Home() {
+  const chartRef = useRef(null);
+  const [chartData, setChartData] = useState({
+    datasets: [],
+  });
+  useEffect(() => {
+    const chart = chartRef.current;
+
+    if (!chart) {
+      return;
+    }
+
+    const chartData = {
+      ...data,
+      datasets: data.datasets.map((dataset, i) =>  {
+        if(i === 0){
+          return ({
+          ...dataset,
+          borderColor: createGradient(chart.ctx, chart.chartArea),
+          backgroundColor: createGradientBackgroundRed(chart.ctx, chart.chartArea),
+        })
+        }
+        else if(i === 1){
+          return ({
+          ...dataset,
+          borderColor: createGradient(chart.ctx, chart.chartArea),
+          backgroundColor: createGradientBackgroundBlue(chart.ctx, chart.chartArea),
+        })
+        }
+      })
+    };
+
+    setChartData(chartData);
+  }, []);
+
+  
+  const options= {
+    responsive: true,
+    scales: {
+      y: {
+          // min : 0,
+          // max : 20,
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1
+          }
+        }
+    },
+    plugins: {
+      title: {
+        text : "Grafik progres merokok budi",
+        display: true,
+        color: '#D0d099',
+        font: {
+          size: 20,
+          weight: 'bold'
+        }
+      },
+      legend:{
+        display: true,
+        position: 'top',
+        color: 'red',
+
+        labels:{
+          color: 'blue',
+          usePointStyle: true,
+          pointStyle: 'rect',
+        },
+      }
+    },
+    animations: {
+      tension: {
+        duration: 1000,
+        easing: 'easeInBounce',
+        from: 1,
+        to: 0,
+        loop: true
+      }
+    },
+    transitions: {
+      show: {
+        animations: {
+          x: {
+            from: 200
+          },
+          y: {
+            from: 1000
+          }
+        }
+      },
+      hide: {
+        animations: {
+          x: {
+            to: 200
+          },
+          y: {
+            to: 1000
+          }
+        }
+      },
+      active: {
+        animations: {
+          properties: 'easeInCubic'
+        }
+      }
+    }
+  }
+
+
+  const [currentChart, setCurrentChart] = useState('line');
+  const chartTypeRef = useRef(null);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+  <main>
+    <h1 >Chart js</h1>
+    <select name="chartType" id="chartType" ref={chartTypeRef} onChange={()=> setCurrentChart(chartTypeRef.current?.value)}>
+      <option value='line' >Line</option>
+      <option value="bar" >Bar</option>
+    </select>
+    <div className="relative w-1/2 h-3/4 border border-red-700">
+      {
+        currentChart ==='line' ?
+        <Line
+        datasetIdKey='id'
+        data={chartData}
+        width={400} 
+        height={250} 
+        options={options}
+        ref={chartRef}
+         />
+         :
+         <Bar
+         datasetIdKey='id'
+         data={chartData}
+         width={400} 
+         height={250} 
+         options={options}
+         ref={chartRef}
+          />
+      }
+    </div>
+  </main>
   )
 }
