@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body{
-  background: rgb(0, 255, 247);
-} */
+.selected:not([disabled]) { 
+  background: rgba(254, 173, 173, 0.268);
+  border-radius: 0;
+}
+.selected:hover:not([disabled]) { 
+  background: rgba(254, 173, 173, 0.268) !important;
+  color: black;
+}
+.today { 
+  color: white;
+  background: red;
+}
+.range-start:not([disabled]) { 
+  color: white;
+  background: red;
+  border-radius: 25% 0 0 25%;
+}
+.range-end:not([disabled]) { 
+  color: white;
+  background: red;
+  border-radius: 0 25% 25% 0;
+}
+h1{
+  color: rgb(0, 255, 4);
+  background: rgb(255, 0, 98);
+}

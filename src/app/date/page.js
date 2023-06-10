@@ -1,4 +1,4 @@
-import DatePicker from '@/components/ui/datePicker'
+import DatePicker from '@/components/ui/DatePicker'
 import React from 'react'
 
 export default function Date() {

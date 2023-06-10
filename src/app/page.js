@@ -12,7 +12,7 @@ export const data = {
       {
       label: 'jumlah rokok',
       data: [12, 13, 10, 9, 6, 8, 6, 10, 11, 9, 10, 11],
-      borderWidth: 1,
+      borderWidth: 2,
       borderColor: 'red',
       fill: true,
       cubicInterpolationMode: 'monotone',
@@ -20,34 +20,36 @@ export const data = {
       {
       label: 'jumlah uang',
       data: [1, 4, 8, 6, 10, 11, 9, 10, 6, 7, 6, 4 ],
-      borderWidth: 1,
+      borderWidth: 2,
       borderColor: 'blue',
       fill: true,
       cubicInterpolationMode: 'monotone',
     },
   ]
 }
-const createGradient=(ctx, area)=>{
-  const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
-  gradient.addColorStop(0, 'green');
-  gradient.addColorStop(0.5, 'yellow');
-  gradient.addColorStop(1, 'red');
-  return gradient;
-}
+// const createGradient=(ctx, area)=>{
+//   const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
+//   gradient.addColorStop(0, 'green');
+//   gradient.addColorStop(0.5, 'yellow');
+//   gradient.addColorStop(1, 'red');
+//   return gradient;
+// }
 const createGradientBackgroundRed=(ctx, area)=>{
   const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
-  gradient.addColorStop(0, 'rgba(20, 205, 30, 0.01)');
-  gradient.addColorStop(1, 'rgba(255, 0, 111, 0.6)');
+  gradient.addColorStop(0, 'rgba(255, 0, 111, 0.01)');
+  gradient.addColorStop(1, 'rgba(255, 0, 111, 0.4)');
   return gradient;
 }
 const createGradientBackgroundBlue=(ctx, area)=>{
   const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
-  gradient.addColorStop(0, 'rgba(0, 255, 247, 0.01)');
-  gradient.addColorStop(1, 'rgba(0, 255, 247, 0.6)');
+  gradient.addColorStop(0, 'rgba(0, 102, 255, 0.01)');
+  gradient.addColorStop(1, 'rgba(0, 102, 255, 0.4)');
   return gradient;
 }
 
 export default function Home() {
+  const [currentChart, setCurrentChart] = useState('line');
+  const chartTypeRef = useRef(null);
   const chartRef = useRef(null);
   const [chartData, setChartData] = useState({
     datasets: [],
@@ -62,17 +64,31 @@ export default function Home() {
     const chartData = {
       ...data,
       datasets: data.datasets.map((dataset, i) =>  {
-        if(i === 0){
+        if(currentChart === 'bar'){
+          if(i === 0){
+            return ({
+            ...dataset,
+            borderWidth: 0,
+            backgroundColor: 'rgb(255, 0, 98)',
+          })
+        }
+        else if(i === 1){
+          return ({
+            ...dataset,
+            borderWidth: 0,
+            backgroundColor: 'rgb(0, 102, 255)',
+          })
+          }
+        }
+        else if(i === 0){
           return ({
           ...dataset,
-          borderColor: createGradient(chart.ctx, chart.chartArea),
           backgroundColor: createGradientBackgroundRed(chart.ctx, chart.chartArea),
         })
         }
         else if(i === 1){
           return ({
           ...dataset,
-          borderColor: createGradient(chart.ctx, chart.chartArea),
           backgroundColor: createGradientBackgroundBlue(chart.ctx, chart.chartArea),
         })
         }
@@ -80,7 +96,7 @@ export default function Home() {
     };
 
     setChartData(chartData);
-  }, []);
+  }, [currentChart]);
 
   
   const options= {
@@ -108,7 +124,7 @@ export default function Home() {
       legend:{
         display: true,
         position: 'top',
-        color: 'red',
+        color: 'green',
 
         labels:{
           color: 'blue',
@@ -156,16 +172,21 @@ export default function Home() {
   }
 
 
-  const [currentChart, setCurrentChart] = useState('line');
-  const chartTypeRef = useRef(null);
+  
   return (
   <main>
     <h1 >Chart js</h1>
-    <select name="chartType" id="chartType" ref={chartTypeRef} onChange={()=> setCurrentChart(chartTypeRef.current?.value)}>
-      <option value='line' >Line</option>
-      <option value="bar" >Bar</option>
-    </select>
-    <div className="relative w-1/2 h-3/4 border border-red-700">
+    <div className=" w-1/2 h-3/4 flex justify-end items-center space-x-4 text-gray-700">
+      <label htmlFor="chartType">Tipe grafik : </label>
+      <select 
+      name="chartType" id="chartType" ref={chartTypeRef} 
+      className="bg-red-100 px-4 py-1 rounded-md focus:outline-none"
+      onChange={()=> setCurrentChart(chartTypeRef.current?.value)}>
+        <option value='line' >Line</option>
+        <option value="bar" >Bar</option>
+      </select>
+    </div>
+    <div className="relative w-1/2 h-3/4 mt-8">
       {
         currentChart ==='line' ?
         <Line
