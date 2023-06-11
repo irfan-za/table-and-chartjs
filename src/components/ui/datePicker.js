@@ -8,14 +8,14 @@ export default function DatePicker() {
   const [range, setRange] = useState(null);
   const [show, setShow] = useState(false);
 
-  let footer = <p>Pilih tanggal terlebih dahulu.</p>;
+  let footer = <p className="mt-4 font-medium text-center">Pilih tanggal terlebih dahulu.</p>;
   if (range?.from) {
     console.log(range.from, range.to);
     if (!range.to) {
-      footer = <p>{format(range.from, 'PP')}</p>;
+      footer = <p className="mt-4 font-medium text-center">{format(range.from, 'PP')}</p>;
     } else if (range.to) {
       footer = (
-        <p>
+        <p className="mt-4 font-medium text-center">
           {format(range.from, 'PP')} – {format(range.to, 'PP')}
         </p>
       );
@@ -24,12 +24,13 @@ export default function DatePicker() {
 
   return (
     <div>
-      <button onClick={()=>setShow(!show)} className="px-4 py-1 bg-red-600 text-white rounded-md hover:bg-red-500" >{show ? (range? 'Oke': 'Pilih tanggal') : 'Pilih tanggal'}</button>
+      <button onClick={()=>setShow(!show)} className="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm">{show ? (range? 'Oke': 'Pilih tanggal') : 'Pilih tanggal'}</button>
       <br />
       {/* {range ? footer : <span>Pick a date</span>} */}
       {
          show && (
            <DayPicker
+           className="absolute z-10 p-4 rounded-lg bg-gray-100 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-60 border border-gray-200"
              defaultMonth={new Date()}
              mode="range"
              min={2}
