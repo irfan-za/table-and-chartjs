@@ -10,7 +10,6 @@ export default function ReactTable() {
   const [data, setData] = useState(dataJson)
   const [showDataType, setShowDataType] = useState('table')
   const [currentChart, setCurrentChart] = useState('line');
-  const showDataTypeRef = useRef(null);
   const chartTypeRef = useRef(null);
   
   // function find data
@@ -28,14 +27,15 @@ export default function ReactTable() {
           <div className="inline-flex overflow-hidden bg-white border rounded-lg rtl:flex-row-reverse mt-4 md:mt-0">
               <DatePicker/>
           </div>
-          <div>
-            <select 
-            name="showDataType" ref={showDataTypeRef}
-            className="px-3 py-0.5 border-b-2 border-green-500 bg-green-100 bg-opacity-25 rounded-md focus:outline-none mt-4 md:mt-0"
-            onChange={()=> setShowDataType(showDataTypeRef.current?.value)}>
-              <option value="table">Tabel</option>
-              <option value="chart">Grafik</option>
-            </select>
+          <div className="flex items-end">
+            <button value={'table'} onClick={(e)=>setShowDataType(e.target.value)}
+            className={`${showDataType=='table' ? 'border-green-500 bg-green-100 bg-opacity-30' :' border-gray-300'} border-b-2 px-3 py-0.5 mt-4 md:mt-0`}>
+              Tabel
+            </button>
+            <button value={'chart'} onClick={(e)=>setShowDataType(e.target.value)}
+            className={`${showDataType=='chart' ? 'border-green-500 bg-green-100 bg-opacity-30' :' border-gray-300'} border-b-2 px-3 py-0.5 mt-4 md:mt-0`}>
+              Grafik
+            </button>
           </div>
           {
             showDataType==='table' ?
